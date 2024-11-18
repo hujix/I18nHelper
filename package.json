@@ -1,0 +1,63 @@
+{
+  "name": "i18n-helper",
+  "type": "module",
+  "private": true,
+  "description": "I18nHelper是一款基于AI技术的语言翻译工具，专为开发者设计。它能快速、准确地将您的网站从一种语言翻译成多种语言，无需人工干预。只需上传您的语言文件。",
+  "license": "MIT",
+  "homepage": "https://github.com/hujix/I18nHelper#readme",
+  "repository": "https://github.com/hujix/I18nHelper",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "lint": "prettier --write . && npx eslint . --fix"
+  },
+  "dependencies": {
+    "@nuxtjs/color-mode": "^3.5.2",
+    "@radix-icons/vue": "^1.0.0",
+    "@vueuse/core": "^11.2.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "lucide-vue-next": "^0.460.0",
+    "nuxt": "^3.14.159",
+    "pinia": "^2.2.5",
+    "radix-vue": "^1.9.9",
+    "shadcn-nuxt": "^0.11.2",
+    "tailwind-merge": "^2.5.4",
+    "tailwindcss-animate": "^1.0.7",
+    "vue": "^3.5.13",
+    "vue-i18n": "^10",
+    "vue-router": "latest"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^3.9.1",
+    "@nuxt/devtools": "latest",
+    "@nuxt/eslint": "^0.7.0",
+    "@nuxtjs/i18n": "^9.0.0",
+    "@nuxtjs/tailwindcss": "^6.12.2",
+    "@pinia/nuxt": "^0.7.0",
+    "@types/node": "^22.8.6",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.15.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-format": "^0.1.2",
+    "lint-staged": "^15.2.9",
+    "postcss": "^8.4.49",
+    "prettier": "^3.3.3",
+    "prettier-plugin-jsdoc": "^1.3.0",
+    "prettier-plugin-tailwindcss": "^0.6.8",
+    "simple-git-hooks": "^2.11.1",
+    "tailwindcss": "^3.4.15",
+    "typescript": "^5.6.3",
+    "vite-plugin-eslint2": "^5.0.2",
+    "vue-tsc": "^2.1.10"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm lint-staged"
+  },
+  "lint-staged": {
+    "*": "eslint . --fix"
+  }
+}
