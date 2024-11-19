@@ -80,5 +80,6 @@
     "pcss",
     "postcss"
   ],
-  "i18n-ally.localesPaths": ["locales"]
+  "i18n-ally.localesPaths": ["locales"],
+  "cSpell.words": ["deeplx", "lucide", "Nuxt", "nuxtjs", "pinia", "shadcn"]
 }

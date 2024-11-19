@@ -3,14 +3,9 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
   ssr: true,
-  modules: [
-    "@pinia/nuxt",
-    "@nuxtjs/tailwindcss",
-    "@nuxt/eslint",
-    "shadcn-nuxt",
-    "@nuxtjs/color-mode",
-    "@nuxtjs/i18n",
-  ],
+
+  modules: ["@pinia/nuxt", "@nuxtjs/tailwindcss", "@nuxt/eslint", "shadcn-nuxt", "@nuxtjs/i18n"],
+
   typescript: {
     typeCheck: true,
     strict: true,
@@ -29,6 +24,7 @@ export default defineNuxtConfig({
       autoprefixer: {},
     },
   },
+
   shadcn: {
     /** Prefix for all the imported component */
     prefix: "",
@@ -39,6 +35,7 @@ export default defineNuxtConfig({
      */
     componentDir: "./components/ui",
   },
+
   i18n: {
     lazy: true,
     defaultLocale: "zh",
@@ -48,18 +45,15 @@ export default defineNuxtConfig({
       redirectOn: "root",
       alwaysRedirect: true,
     },
-    langDir: "../locales",
+    langDir: "../locales/",
     locales: [
       {
         code: "zh",
         name: "简体中文",
         file: "zh-CN.json",
       },
-      // {
-      //   code: "en",
-      //   name: "English",
-      //   file: "en-US.json",
-      // },
     ],
   },
+
+  compatibilityDate: "2024-11-19",
 });
