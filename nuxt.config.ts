@@ -4,7 +4,14 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   ssr: true,
 
-  modules: ["@pinia/nuxt", "@nuxtjs/tailwindcss", "@nuxt/eslint", "shadcn-nuxt", "@nuxtjs/i18n"],
+  modules: [
+    "@pinia/nuxt",
+    "@nuxtjs/color-mode",
+    "@nuxtjs/tailwindcss",
+    "@nuxt/eslint",
+    "shadcn-nuxt",
+    "@nuxtjs/i18n",
+  ],
 
   typescript: {
     typeCheck: true,
@@ -35,7 +42,17 @@ export default defineNuxtConfig({
      */
     componentDir: "./components/ui",
   },
-
+  colorMode: {
+    preference: "system", // default value of $colorMode.preference
+    fallback: "light", // fallback value if not system preference found
+    hid: "nuxt-color-mode-script",
+    globalName: "__NUXT_COLOR_MODE__",
+    componentName: "ColorScheme",
+    classPrefix: "",
+    classSuffix: "",
+    storage: "localStorage", // or 'sessionStorage' or 'cookie'
+    storageKey: "color-mode",
+  },
   i18n: {
     lazy: true,
     defaultLocale: "zh",

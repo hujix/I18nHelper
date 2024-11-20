@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { Button } from "@/components/ui/button";
-import { LanguagesIcon } from "lucide-vue-next";
+
+import { LanguagesIcon, Moon, Sun } from "lucide-vue-next";
+
+const colorMode = useColorMode();
+
+function toggleTheme() {
+  colorMode.preference = colorMode.preference === "dark" ? "light" : "dark";
+}
 </script>
 
 <template>
@@ -44,6 +51,10 @@ import { LanguagesIcon } from "lucide-vue-next";
                 />
               </svg>
             </a>
+          </Button>
+          <Button variant="ghost" size="icon" @click="toggleTheme">
+            <Sun v-if="$colorMode.value === 'light'" class="h-6 w-6" />
+            <Moon v-else class="h-6 w-6" />
           </Button>
         </div>
       </div>
