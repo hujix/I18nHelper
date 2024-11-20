@@ -20,7 +20,6 @@ export const useTranslateStore = defineStore("translate", () => {
   const translatedData = ref<Record<string, any>>({});
   const selectedLanguages = ref<Set<string>>(new Set());
   const expandedLang = ref("");
-  const splitView = ref(true);
   const ignoredKeys = ref<string[]>([]);
   const availableLanguages = ref<Language[]>([]);
 
@@ -122,7 +121,6 @@ export const useTranslateStore = defineStore("translate", () => {
     translatedData,
     selectedLanguages,
     expandedLang,
-    splitView,
     ignoredKeys,
     availableLanguages,
     // Getters

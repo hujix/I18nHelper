@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Button } from "@/components/ui/button";
-
 import { LanguagesIcon, Moon, Sun } from "lucide-vue-next";
 
 const colorMode = useColorMode();

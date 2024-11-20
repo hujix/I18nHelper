@@ -42,7 +42,7 @@ async function processFile(file: File) {
       @dragleave.prevent="isDragging = false"
       @dragend.prevent="isDragging = false"
     >
-      <div class="flex h-10 w-10 items-center justify-center rounded-full dark:bg-white">
+      <div class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
         <UploadIcon class="h-5 w-5" />
       </div>
 
