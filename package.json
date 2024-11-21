@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@nuxtjs/color-mode": "^3.5.2",
-    "@vueuse/core": "^11.2.0",
+    "@vueuse/core": "^11.3.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "deeplx": "^0.1.2",
@@ -35,7 +35,7 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^3.9.2",
-    "@nuxt/devtools": "latest",
+    "@nuxt/devtools": "^1.6.1",
     "@nuxt/eslint": "^0.7.1",
     "@nuxtjs/i18n": "^9.1.0",
     "@nuxtjs/tailwindcss": "^6.12.2",

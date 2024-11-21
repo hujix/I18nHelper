@@ -1,16 +1,6 @@
-import type { TargetLanguage } from "deeplx";
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
-
-interface KeySuggestion {
-  value: string;
-  label: string;
-}
-
-interface Language {
-  code: TargetLanguage;
-  name: string;
-}
+import type { KeySuggestion, Language } from "~/types/translate.type";
 
 export const useTranslateStore = defineStore("translate", () => {
   // 状态
@@ -95,15 +85,29 @@ export const useTranslateStore = defineStore("translate", () => {
 
   function initializeLanguages(t: (key: string) => string) {
     availableLanguages.value = [
-      { code: "EN", name: t("translate.languages.en") },
-      { code: "ZH", name: t("translate.languages.zh") },
-      { code: "JA", name: t("translate.languages.ja") },
-      { code: "FR", name: t("translate.languages.fr") },
-      { code: "DE", name: t("translate.languages.de") },
-      { code: "ES", name: t("translate.languages.es") },
-      { code: "IT", name: t("translate.languages.it") },
-      { code: "PT", name: t("translate.languages.pt") },
-      { code: "RU", name: t("translate.languages.ru") },
+      { code: "zh", name: t("translate.languages.zh"), file: "zh-CN.json" },
+      { code: "en", name: t("translate.languages.en"), file: "en-US.json" },
+      { code: "es", name: t("translate.languages.es"), file: "es-ES.json" },
+      { code: "fr", name: t("translate.languages.fr"), file: "fr-FR.json" },
+      { code: "de", name: t("translate.languages.de"), file: "de-DE.json" },
+      { code: "ru", name: t("translate.languages.ru"), file: "ru-RU.json" },
+      { code: "pt", name: t("translate.languages.pt"), file: "pt-PT.json" },
+      { code: "ja", name: t("translate.languages.ja"), file: "ja-JP.json" },
+      { code: "it", name: t("translate.languages.it"), file: "it-IT.json" },
+      { code: "pl", name: t("translate.languages.pl"), file: "pl-PL.json" },
+      { code: "bg", name: t("translate.languages.bg"), file: "bg-BG.json" },
+      { code: "sv", name: t("translate.languages.sv"), file: "sv-SE.json" },
+      { code: "nl", name: t("translate.languages.nl"), file: "nl-NL.json" },
+      { code: "da", name: t("translate.languages.da"), file: "da-DK.json" },
+      { code: "cs", name: t("translate.languages.cs"), file: "cs-CZ.json" },
+      { code: "hu", name: t("translate.languages.hu"), file: "hu-HU.json" },
+      { code: "et", name: t("translate.languages.et"), file: "et-EE.json" },
+      { code: "lv", name: t("translate.languages.lv"), file: "lv-LV.json" },
+      { code: "lt", name: t("translate.languages.lt"), file: "lt-LT.json" },
+      { code: "sk", name: t("translate.languages.sk"), file: "sk-SK.json" },
+      { code: "ro", name: t("translate.languages.ro"), file: "ro-RO.json" },
+      { code: "sl", name: t("translate.languages.sl"), file: "sl-SI.json" },
+      { code: "el", name: t("translate.languages.el"), file: "el-GR.json" },
     ];
   }
 

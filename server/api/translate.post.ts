@@ -1,19 +1,7 @@
 import { PassThrough } from "node:stream";
-import { type SourceLanguage, type TargetLanguage, translate } from "deeplx";
+import { type SourceLanguage, translate } from "deeplx";
 import pLimit from "p-limit";
-
-interface TranslateRequest {
-  texts: string[];
-  targetLang: TargetLanguage;
-  sourceLang?: SourceLanguage;
-}
-
-interface TranslateEvent {
-  type: "progress";
-  progress: number;
-  index: number;
-  translation: string;
-}
+import type { TranslateEvent, TranslateRequest } from "~/types/translate.type";
 
 export default defineEventHandler(async (event) => {
   try {
@@ -34,17 +22,22 @@ export default defineEventHandler(async (event) => {
       "Connection": "keep-alive",
     });
 
-    // 创建一个 PassThrough 流来保持连接
     const stream = new PassThrough();
     event.node.res.socket?.setNoDelay(true);
-
-    // 设置响应流
     sendStream(event, stream);
 
+    let isConnectionClosed = false;
+
+    // 监听客户端断开连接
+    event.node.req.on("close", () => {
+      isConnectionClosed = true;
+      stream.end();
+    });
+
     const limit = pLimit(5);
-    const weights = texts.map(text => text.length);
+    const weights = texts.map((text) => text.length);
     const totalWeight = weights.reduce((a, b) => a + b, 0);
-    const batchSize = 5;
+    const batchSize = 1;
     const batches: string[][] = [];
     const batchWeights: number[][] = [];
 
@@ -55,30 +48,49 @@ export default defineEventHandler(async (event) => {
 
     let accumulatedWeight = 0;
 
-    // 发送事件的辅助函数
     const sendProgressEvent = (progressEvent: TranslateEvent) => {
-      stream.write(`data: ${JSON.stringify(progressEvent)}\n\n`);
+      if (!isConnectionClosed) {
+        stream.write(`data: ${JSON.stringify(progressEvent)}\n\n`);
+      }
     };
 
-    // 逐批翻译
     for (let batchIndex = 0; batchIndex < batches.length; batchIndex++) {
+      if (isConnectionClosed) {
+        break;
+      }
+
       const batch = batches[batchIndex];
       const batchWeight = batchWeights[batchIndex];
 
       const batchPromises = batch.map((text, index) =>
         limit(async () => {
+          if (isConnectionClosed) {
+            return;
+          }
+
           try {
-            const result = await translate(
-              text as string,
+            let translateText = text;
+            if (translateText.length <= 5) {
+              translateText = `${translateText}(@)`;
+            }
+
+            // 将 signal 传递给翻译函数（如果 deeplx 支持的话）
+            let result = await translate(
+              translateText as string,
               targetLang,
               sourceLang as SourceLanguage
             );
+
+            if (isConnectionClosed) {
+              return;
+            }
 
             accumulatedWeight += batchWeight[index];
             const progress = Math.floor((accumulatedWeight / totalWeight) * 100);
             const globalIndex = batchIndex * batchSize + index;
 
-            // 实时发送进度和翻译结果
+            result = result.replace("(@)", "");
+
             sendProgressEvent({
               type: "progress",
               progress,
@@ -88,13 +100,16 @@ export default defineEventHandler(async (event) => {
 
             return { index: globalIndex, translation: result };
           } catch (error) {
+            if (isConnectionClosed) {
+              return;
+            }
+
             console.error(`Translation failed for text at index ${index}:`, error);
 
             const globalIndex = batchIndex * batchSize + index;
             accumulatedWeight += batchWeight[index];
             const progress = Math.floor((accumulatedWeight / totalWeight) * 100);
 
-            // 发送错误状态
             sendProgressEvent({
               type: "progress",
               progress,
@@ -110,16 +125,15 @@ export default defineEventHandler(async (event) => {
       await Promise.all(batchPromises);
     }
 
-    // 发送完成事件
-    sendProgressEvent({
-      type: "progress",
-      progress: 100,
-      index: -1,
-      translation: "",
-    });
-
-    // 关闭流
-    stream.end();
+    if (!isConnectionClosed) {
+      sendProgressEvent({
+        type: "progress",
+        progress: 100,
+        index: -1,
+        translation: "",
+      });
+      stream.end();
+    }
   } catch (error) {
     console.error("Translation error:", error);
     throw createError({

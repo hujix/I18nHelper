@@ -5,16 +5,15 @@
       "docs": "文档",
       "about": "关于"
     },
-    "footer": "© 2024 I18nHelper. All rights reserved."
+    "footer": "© 2024 I18nHelper，All rights reserved."
   },
   "home": {
     "hero": {
       "title": "轻松实现多语言本地化",
-      "description": "基于 AI 技术，快速将您的 JSON 语言文件翻译成多种语言。支持批量翻译、实时预览和一键导出。",
+      "description": "基于 AI 技术，快速将您的 JSON 语言文件翻译成多种语言。 支持批量翻译、实时预览和一键导出。",
       "upload": {
         "choice": "选择文件",
-        "drag": "拖放文件到这里",
-        "or": "或",
+        "drag": "或拖放文件到这里",
         "hint": "支持 JSON 格式的语言文件"
       }
     },
@@ -40,15 +39,30 @@
       "downloadAll": "下载全部翻译结果"
     },
     "languages": {
-      "en": "English",
+      "en": "英语",
       "zh": "中文",
-      "ja": "日本語",
-      "fr": "Français",
-      "de": "Deutsch",
-      "es": "Español",
-      "it": "Italiano",
-      "pt": "Português",
-      "ru": "Русский"
+      "ja": "日语",
+      "fr": "法语",
+      "de": "德语",
+      "es": "西班牙语",
+      "it": "意大利语",
+      "pt": "葡萄牙语",
+      "ru": "俄语",
+      "bg": "保加利亚语",
+      "cs": "捷克语",
+      "da": "丹麦语",
+      "nl": "荷兰语",
+      "et": "爱沙尼亚语",
+      "fi": "芬兰语",
+      "el": "希腊语",
+      "hu": "匈牙利语",
+      "lv": "拉脱维亚语",
+      "lt": "立陶宛语",
+      "pl": "波兰语",
+      "ro": "罗马尼亚语",
+      "sk": "斯洛伐克语",
+      "sl": "斯洛文尼亚语",
+      "sv": "瑞典语"
     },
     "ignoreKeys": "忽略的翻译键",
     "ignoreKeysPlaceholder": "输入以搜索键路径...",
@@ -57,7 +71,7 @@
   },
   "about": {
     "title": "关于 I18n Helper",
-    "description": "I18n Helper 是一个基于 AI 技术的多语言翻译工具，专为开发者设计。它能帮助你快速将项目的语言文件翻译成多种语言。",
+    "description": "I18n Helper 是一个基于 AI 技术的多语言翻译工具，专为开发者设计。 它能帮助你快速将项目的语言文件翻译成多种语言。",
     "features": {
       "title": "主要特性",
       "list": [
@@ -127,7 +141,7 @@
       "title": "最佳实践",
       "list": [
         "保持 JSON 结构简单清晰",
-        "避免在键名中使用特殊��符",
+        "避免在键名中使用特殊符",
         "定期备份重要的翻译文件",
         "翻译完成后及时下载保存结果"
       ]

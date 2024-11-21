@@ -52,7 +52,7 @@ async function processFile(file: File) {
             {{ $t("home.hero.upload.choice") }}
           </Button>
           <span class="text-muted-foreground">
-            {{ $t("home.hero.upload.or") }}{{ $t("home.hero.upload.drag") }}
+            {{ $t("home.hero.upload.drag") }}
           </span>
         </div>
         <p class="text-xs text-muted-foreground">

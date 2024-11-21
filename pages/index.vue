@@ -3,13 +3,15 @@ import { Download, FileJson, Languages } from "lucide-vue-next";
 import { useRouter } from "vue-router";
 import { useTranslateStore } from "~/stores/translate";
 
+const localePath = useLocalePath();
+
 const router = useRouter();
 const store = useTranslateStore();
 
 async function handleFileUploaded(content: any) {
   store.setSourceData(content);
   localStorage.setItem("translationSource", JSON.stringify(content));
-  await router.push("/translate");
+  await router.push(localePath("/translate"));
 }
 </script>
 

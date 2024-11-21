@@ -2,10 +2,12 @@
 import { Button } from "@/components/ui/button";
 import { LanguagesIcon, Moon, Sun } from "lucide-vue-next";
 
+const localePath = useLocalePath();
+
 const colorMode = useColorMode();
 
 function toggleTheme() {
-  colorMode.preference = colorMode.preference === "dark" ? "light" : "dark";
+  colorMode.preference = colorMode.value === "dark" ? "light" : "dark";
 }
 </script>
 
@@ -13,11 +15,11 @@ function toggleTheme() {
   <div class="h-screen overflow-hidden bg-background">
     <!-- Header -->
     <header
-      class="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:text-white"
+      class="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
     >
       <div class="container flex h-14 items-center">
         <div class="flex items-center space-x-4">
-          <NuxtLink to="/" class="flex items-center space-x-2">
+          <NuxtLink :to="localePath('/')" class="flex items-center space-x-2">
             <LanguagesIcon class="h-6 w-6" />
             <span class="font-bold">
               {{ $t("title") }}

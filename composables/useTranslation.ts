@@ -1,34 +1,9 @@
 import type { SourceLanguage, TargetLanguage } from "deeplx";
-
-interface TranslateEvent {
-  type: "progress";
-  progress: number;
-  index: number;
-  translation: string;
-}
+import type { TranslateEvent } from "~/types/translate.type";
 
 export function useTranslation() {
-  // 深拷贝函数
-  function deepClone<T>(obj: T): T {
-    if (obj === null || typeof obj !== "object") {
-      return obj;
-    }
-
-    if (Array.isArray(obj)) {
-      return obj.map(item => deepClone(item)) as unknown as T;
-    }
-
-    const clonedObj = {} as T;
-    for (const key in obj) {
-      if (Object.prototype.hasOwnProperty.call(obj, key)) {
-        clonedObj[key] = deepClone(obj[key]);
-      }
-    }
-    return clonedObj;
-  }
-
   async function translateObject(
-    obj: any,
+    obj: Record<string, object>,
     targetLang: TargetLanguage,
     sourceLang: SourceLanguage = "auto",
     onProgress?: (progress: number) => void,
@@ -85,16 +60,18 @@ export function useTranslation() {
       });
 
       const reader = response.body?.getReader();
-      if (!reader)
+      if (!reader) {
         throw new Error("No reader available");
+      }
 
       // 使用自定义的深拷贝函数替代 structuredClone
-      const result = deepClone(obj);
+      const result = JSON.parse(JSON.stringify(obj));
 
       while (true) {
         const { done, value } = await reader.read();
-        if (done)
+        if (done) {
           break;
+        }
 
         const text = new TextDecoder().decode(value);
         const events = text.split("\n\n").filter(Boolean);
