@@ -27,12 +27,10 @@ import {
 } from "radix-vue";
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRouter } from "vue-router";
 import { useTranslation } from "~/composables/useTranslation";
 
 import { useTranslateStore } from "~/stores/translate";
 
-const router = useRouter();
 const { t } = useI18n();
 const translation = useTranslation();
 const store = useTranslateStore();
@@ -59,10 +57,10 @@ onMounted(() => {
       localStorage.removeItem("translationSource");
     } catch (error) {
       console.error("Error parsing saved data:", error);
-      router.push("/");
+      store.reset();
     }
   } else {
-    router.push("/");
+    store.reset();
   }
 });
 
@@ -82,34 +80,45 @@ const filteredKeys = computed(() => {
 
 // 开始翻译
 async function startTranslation() {
-  if (!store.sourceData || store.selectedLanguages.size === 0) return;
+  if (!store.sourceData || store.selectedLanguages.size === 0) {
+    return;
+  }
 
   store.setTranslating(true);
   store.reset();
 
   try {
-    const translations = await Promise.all(
-      Array.from(store.selectedLanguages).map(async (targetLang) => {
-        store.updateProgress(targetLang, 0);
-        const result = await translation.translateObject(
-          store.sourceData!,
-          targetLang as any,
-          "auto",
-          (progress) => {
-            store.updateProgress(targetLang, progress);
-          },
-          store.ignoredKeys
-        );
-        return { targetLang, result };
-      })
-    );
+    // 将语言分批处理，每批3个
+    const languages = Array.from(store.selectedLanguages);
+    const batchSize = 3;
 
-    translations.forEach(({ targetLang, result }) => {
-      store.setTranslatedData(targetLang, result);
-    });
+    for (let i = 0; i < languages.length; i += batchSize) {
+      const batch = languages.slice(i, i + batchSize);
 
-    if (translations.length > 0) {
-      store.setExpandedLang(translations[0].targetLang);
+      const translations = await Promise.all(
+        batch.map(async (targetLang) => {
+          store.updateProgress(targetLang, 0);
+          const result = await translation.translateObject(
+            store.sourceData!,
+            targetLang as any,
+            "auto",
+            (progress) => {
+              store.updateProgress(targetLang, progress);
+            },
+            store.ignoredKeys
+          );
+          return { targetLang, result };
+        })
+      );
+
+      translations.forEach(({ targetLang, result }) => {
+        store.setTranslatedData(targetLang, result);
+      });
+    }
+
+    // 设置第一个语言为展开状态
+    if (store.selectedLanguages.size > 0) {
+      store.setExpandedLang(Array.from(store.selectedLanguages)[0]);
     }
   } catch (error) {
     console.error("翻译错误:", error);
@@ -136,21 +145,24 @@ function handleKeyDelete(key: string) {
 async function downloadAllTranslations() {
   const zip = new JSZip();
 
-  Object.entries(store.translatedData).forEach(([lang, data]) => {
-    const langName = store.availableLanguages.find((l) => l.code === lang)?.name || lang;
-    const folderName = `${lang}-${langName}`;
+  const configLanguages: { code: string; file: string }[] = [];
 
-    zip.folder(folderName)?.file("translation.json", JSON.stringify(data, null, 2));
+  Object.entries(store.translatedData).forEach(([lang, data]) => {
+    const fileName = store.availableLanguages.find(
+      (l) => l.code.toLowerCase() === lang.toLowerCase()
+    )!.file;
+    zip.file(fileName, JSON.stringify(data, null, 2));
+    configLanguages.push({ code: lang.toLowerCase(), file: fileName });
   });
 
-  zip.folder("source")?.file("original.json", JSON.stringify(store.sourceData, null, 2));
+  zip.file("config.json", JSON.stringify(configLanguages, null, 2));
 
   try {
     const content = await zip.generateAsync({ type: "blob" });
     const url = URL.createObjectURL(content);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "translations.zip";
+    a.download = "translations-by-i18n-helper.zip";
     a.click();
     URL.revokeObjectURL(url);
   } catch (error) {
@@ -163,7 +175,7 @@ async function downloadAllTranslations() {
   <main class="container mx-auto grid grid-cols-2">
     <!-- 源文件预览 -->
     <div class="border-r">
-      <div class="flex flex-col gap-4 p-4">
+      <div class="flex h-full flex-col gap-4 p-4">
         <!-- 忽略键输入 -->
         <div class="space-y-2">
           <label class="text-sm font-medium text-muted-foreground">
@@ -232,7 +244,7 @@ async function downloadAllTranslations() {
         <ScrollArea class="h-[calc(100vh-200px)]">
           <pre
             class="whitespace-pre-wrap pr-2 text-sm"
-          ><code class="language-json">{{ JSON.stringify(store.sourceData, null, 2) }}</code></pre>
+          ><code>{{ JSON.stringify(store.sourceData, null, 2) }}</code></pre>
         </ScrollArea>
       </div>
     </div>
@@ -264,7 +276,7 @@ async function downloadAllTranslations() {
         </div>
       </div>
       <div class="flex-1 overflow-hidden overflow-y-auto p-4">
-        <ScrollArea class="h-[calc(100vh-240px)]">
+        <ScrollArea class="h-[calc(100vh-320px)]">
           <div class="space-y-2">
             <Accordion
               v-if="store.selectedLanguages.size > 0"
@@ -289,10 +301,10 @@ async function downloadAllTranslations() {
                   </div>
                 </AccordionTrigger>
                 <AccordionContent>
-                  <ScrollArea class="h-[calc(100vh-280px)]">
+                  <ScrollArea class="h-96">
                     <pre
                       class="whitespace-pre-wrap pr-2 text-sm"
-                    ><code class="language-json">{{ JSON.stringify(store.translatedData[lang], null, 2) }}</code></pre>
+                    ><code>{{ JSON.stringify(store.translatedData[lang], null, 2) }}</code></pre>
                   </ScrollArea>
                 </AccordionContent>
               </AccordionItem>
@@ -301,8 +313,13 @@ async function downloadAllTranslations() {
         </ScrollArea>
       </div>
       <!-- 下载按钮 -->
-      <div v-if="Object.keys(store.translatedData).length > 0" class="border-t p-3">
-        <Button variant="outline" size="sm" class="w-full" @click="downloadAllTranslations">
+      <div class="border-t p-3">
+        <Button
+          variant="outline"
+          :disable="Object.keys(store.translatedData).length > 0"
+          class="w-full"
+          @click="downloadAllTranslations"
+        >
           <DownloadIcon class="mr-2 h-4 w-4" />
           {{ t("translate.actions.downloadAll") }}
         </Button>
